@@ -1,5 +1,5 @@
 internal void 
-clear_screen(u32 color) {
+clearScreen(u32 color) {
 	u32* pixel = (u32*)render_state.memory;
 	for (int y = 0; y < render_state.height; y++) {
 		for (int x = 0; x < render_state.width; x++) {
@@ -9,7 +9,7 @@ clear_screen(u32 color) {
 }
 
 internal void 
-draw_rect_in_pixels(int x0, int y0, int x1, int y1, u32 color) {
+drawRectInPixels(int x0, int y0, int x1, int y1, u32 color) {
 
 	x0 = clamp(0, x0, render_state.width);
 	x1 = clamp(0, x1, render_state.width);
@@ -27,7 +27,7 @@ draw_rect_in_pixels(int x0, int y0, int x1, int y1, u32 color) {
 global_variable float render_scale = 0.01f;
 
 internal void
-draw_rect(float x, float y, float half_size_x, float half_size_y, u32 color) {	
+drawRect(float x, float y, float half_size_x, float half_size_y, u32 color) {	
 
 	x *= render_state.height * render_scale;
 	y *= render_state.height * render_scale;
@@ -43,34 +43,123 @@ draw_rect(float x, float y, float half_size_x, float half_size_y, u32 color) {
 	int y0 = y - half_size_y;
 	int y1 = y + half_size_y;
 
-	draw_rect_in_pixels(x0, y0, x1, y1, color);
+	drawRectInPixels(x0, y0, x1, y1, color);
 }
 
-
-
-/*
 internal void
-draw_pellet(int xGrid, int yGrid, float pellet_radius, u32 color) {
+drawNumber(int number, float x, float y, float size, u32 color) {
+	float half_size = size * .5f;
 
-}*/
+	bool drew_number = false;
+	while (number || !drew_number) {
+		drew_number = true;
 
+		int digit = number % 10;
+		number = number / 10;
 
+		switch (digit) {
+		case 0: {
+			drawRect(x - size, y, half_size, 2.5f * size, color);
+			drawRect(x + size, y, half_size, 2.5f * size, color);
+			drawRect(x, y + size * 2.f, half_size, half_size, color);
+			drawRect(x, y - size * 2.f, half_size, half_size, color);
+			x -= size * 4.f;
+		} break;
 
-internal void
-draw_wall(std::vector<std::vector<int>> wall_grid, u32 color) {
-	//do calculations to find the size of each box
-	//do more calcuations to find the positions of the center
-	//31*2-->for each center on the vertical
-	//28*2--> for each center on the horizontal
-	//draw rectangle of different color to represent a wall
-	//draw rectangle of different color to represent a wall
-	//draw a border 93 to 84% of the smaller dimension
-	//case-work for how the walls look like later
+		case 1: {
+			drawRect(x + size, y, half_size, 2.5f * size, color);
+			x -= size * 2.f;
+		} break;
 
-	for (int i=0; i<31; i++) {
-		for (int j=0; j<28; j++) {
-			if (wall_grid[i][j] == false) draw_rect(3 * j + 1.5f - 84.f/2, -3 * i + 1.5f + 93.f/2 - 3, 1.4f, 1.4f, color);
+		case 2: {
+			drawRect(x, y + size * 2.f, 1.5f * size, half_size, color);
+			drawRect(x, y, 1.5f * size, half_size, color);
+			drawRect(x, y - size * 2.f, 1.5f * size, half_size, color);
+			drawRect(x + size, y + size, half_size, half_size, color);
+			drawRect(x - size, y - size, half_size, half_size, color);
+			x -= size * 4.f;
+		} break;
+
+		case 3: {
+			drawRect(x - half_size, y + size * 2.f, size, half_size, color);
+			drawRect(x - half_size, y, size, half_size, color);
+			drawRect(x - half_size, y - size * 2.f, size, half_size, color);
+			drawRect(x + size, y, half_size, 2.5f * size, color);
+			x -= size * 4.f;
+		} break;
+
+		case 4: {
+			drawRect(x + size, y, half_size, 2.5f * size, color);
+			drawRect(x - size, y + size, half_size, 1.5f * size, color);
+			drawRect(x, y, half_size, half_size, color);
+			x -= size * 4.f;
+		} break;
+
+		case 5: {
+			drawRect(x, y + size * 2.f, 1.5f * size, half_size, color);
+			drawRect(x, y, 1.5f * size, half_size, color);
+			drawRect(x, y - size * 2.f, 1.5f * size, half_size, color);
+			drawRect(x - size, y + size, half_size, half_size, color);
+			drawRect(x + size, y - size, half_size, half_size, color);
+			x -= size * 4.f;
+		} break;
+
+		case 6: {
+			drawRect(x + half_size, y + size * 2.f, size, half_size, color);
+			drawRect(x + half_size, y, size, half_size, color);
+			drawRect(x + half_size, y - size * 2.f, size, half_size, color);
+			drawRect(x - size, y, half_size, 2.5f * size, color);
+			drawRect(x + size, y - size, half_size, half_size, color);
+			x -= size * 4.f;
+		} break;
+
+		case 7: {
+			drawRect(x + size, y, half_size, 2.5f * size, color);
+			drawRect(x - half_size, y + size * 2.f, size, half_size, color);
+			x -= size * 4.f;
+		} break;
+
+		case 8: {
+			drawRect(x - size, y, half_size, 2.5f * size, color);
+			drawRect(x + size, y, half_size, 2.5f * size, color);
+			drawRect(x, y + size * 2.f, half_size, half_size, color);
+			drawRect(x, y - size * 2.f, half_size, half_size, color);
+			drawRect(x, y, half_size, half_size, color);
+			x -= size * 4.f;
+		} break;
+
+		case 9: {
+			drawRect(x - half_size, y + size * 2.f, size, half_size, color);
+			drawRect(x - half_size, y, size, half_size, color);
+			drawRect(x - half_size, y - size * 2.f, size, half_size, color);
+			drawRect(x + size, y, half_size, 2.5f * size, color);
+			drawRect(x - size, y + size, half_size, half_size, color);
+			x -= size * 4.f;
+		} break;
 		}
-	} 
-				
+
+	}
 }
+
+
+//internal void
+//draw_pellets(std::vector<std::vector<int>> pellet_grid, float pellet_radius, u32 pellet_color) {
+//	for (int i = 0; i < 31; i++) {
+//		for (int j = 0; j < 28; j++) {
+//			if (pellet_grid[i][j] == 1) draw_rect(3 * j + -40.5f, -3 * i + 45.f, .2f, .2f, pellet_color);
+//		}
+//	}
+//}
+
+
+
+//internal void
+//draw_wall(std::vector<std::vector<int>> wall_grid, u32 wall_color) {
+//
+//	for (int i=0; i<31; i++) {
+//		for (int j=0; j<28; j++) {
+//			if (wall_grid[i][j]) draw_rect(3 * j + -40.5f, -3 * i + 45.f, 1.4f, 1.4f, wall_color);
+//		}
+//	} 
+//				
+//}
