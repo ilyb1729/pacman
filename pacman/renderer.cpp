@@ -47,6 +47,105 @@ drawRect(float x, float y, float half_size_x, float half_size_y, u32 color) {
 }
 
 internal void
+drawCircleInPixels(int x0, int y0, int radius, u32 color) {
+	for (int y = y0 - radius; y < y0 + radius; y++) {
+		u32* pixel = (u32*)render_state.memory + x0 - radius + y * render_state.width;
+		for (int x = x0 - radius; x < x0 + radius; x++) {
+			if (sqrt(pow(x0 - x, 2) + pow(y0 - y, 2)) <= radius) {
+				*pixel = color;
+			}
+			*pixel++;
+		}
+	}
+}
+
+internal void
+drawCircle(float x, float y, float radius, u32 color) {
+	x *= render_state.height * render_scale;
+	y *= render_state.height * render_scale;
+	radius *= render_state.height * render_scale;
+
+	x += render_state.width / 2.f;
+	y += render_state.height / 2.f;
+
+	drawCircleInPixels(x, y, radius, color);
+}
+
+internal void
+drawMouthInPixels(int x0, int y0, int radius, int direction, u32 color) {
+
+	switch (direction) {
+	case 0: {
+		for (int y = y0 - radius; y < y0 + radius; y++) {
+			u32* pixel = (u32*)render_state.memory + x0 - radius + y * render_state.width;
+			for (int x = x0 - radius; x < x0 + radius; x++) {
+				int xt = x - x0;
+				int yt = y - y0;
+				if (yt > (3*xt) && yt > (-3*xt)) {
+					*pixel = color;
+				}
+				*pixel++;
+			}
+		}
+	} break;
+
+	case 1: {
+		for (int y = y0 - radius; y < y0 + radius; y++) {
+			u32* pixel = (u32*)render_state.memory + x0 - radius + y * render_state.width;
+			for (int x = x0 - radius; x < x0 + radius; x++) {
+				int xt = x - x0;
+				int yt = y - y0;
+				if (yt < (xt/3) && yt > (-xt/3)) {
+					*pixel = color;
+				}
+				*pixel++;
+			}
+		}
+	} break;
+
+	case 2: {
+		for (int y = y0 - radius; y < y0 + radius; y++) {
+			u32* pixel = (u32*)render_state.memory + x0 - radius + y * render_state.width;
+			for (int x = x0 - radius; x < x0 + radius; x++) {
+				int xt = x - x0;
+				int yt = y - y0;
+				if (yt < (3*xt) && yt < (-3*xt)) {
+					*pixel = color;
+				}
+				*pixel++;
+			}
+		}
+	} break;
+
+	case 3: {
+		for (int y = y0 - radius; y < y0 + radius; y++) {
+			u32* pixel = (u32*)render_state.memory + x0 - radius + y * render_state.width;
+			for (int x = x0 - radius; x < x0 + radius; x++) {
+				int xt = x - x0;
+				int yt = y - y0;
+				if (yt < (-xt/3) && yt > (xt/3)) {
+					*pixel = color;
+				}
+				*pixel++;
+			}
+		}
+	} break;
+	}
+}
+
+internal void
+drawMouth(float x, float y, float radius, int direction) {
+	x *= render_state.height * render_scale;
+	y *= render_state.height * render_scale;
+	radius *= render_state.height * render_scale;
+
+	x += render_state.width / 2.f;
+	y += render_state.height / 2.f;
+
+	drawMouthInPixels(x, y, radius, direction, 0x000000);
+}
+
+internal void
 drawNumber(int number, float x, float y, float size, u32 color) {
 	float half_size = size * .5f;
 
@@ -140,26 +239,3 @@ drawNumber(int number, float x, float y, float size, u32 color) {
 
 	}
 }
-
-
-//internal void
-//draw_pellets(std::vector<std::vector<int>> pellet_grid, float pellet_radius, u32 pellet_color) {
-//	for (int i = 0; i < 31; i++) {
-//		for (int j = 0; j < 28; j++) {
-//			if (pellet_grid[i][j] == 1) draw_rect(3 * j + -40.5f, -3 * i + 45.f, .2f, .2f, pellet_color);
-//		}
-//	}
-//}
-
-
-
-//internal void
-//draw_wall(std::vector<std::vector<int>> wall_grid, u32 wall_color) {
-//
-//	for (int i=0; i<31; i++) {
-//		for (int j=0; j<28; j++) {
-//			if (wall_grid[i][j]) draw_rect(3 * j + -40.5f, -3 * i + 45.f, 1.4f, 1.4f, wall_color);
-//		}
-//	} 
-//				
-//}

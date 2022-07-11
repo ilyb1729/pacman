@@ -9,6 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
+#include <cmath>
 #include "utils.cpp"
 #include <windows.h>
 #include <tchar.h>
