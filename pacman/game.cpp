@@ -83,10 +83,11 @@ class GhostMovement {
 		std::pair <float, float> ghost_speed;
 		std::vector<std::vector<bool>> wall_grid;
 		std::pair <int, int> last_box;
+		int seed;
 
 		float radius;
 		
-		GhostMovement(float pos_x, float pos_y, u32 gcolor, std::vector<std::vector<bool>> wall_layout) {
+		GhostMovement(float pos_x, float pos_y, u32 gcolor, std::vector<std::vector<bool>> wall_layout, int genseed) {
 			reg_speed = 20.f;
 			ghost_speed = std::make_pair(reg_speed, 0.f);
 			ghost_pos = std::make_pair(pos_x, pos_y);
@@ -97,6 +98,7 @@ class GhostMovement {
 			radius = 1.5f;
 			facing = 1; // 0 = up, 1 = right, 2 = down, 3 = left
 			last_box = std::make_pair(-100, -100);
+			seed = genseed;
 		}
 
 		void drawGhost() {
@@ -195,7 +197,7 @@ class GhostMovement {
 					poss.push_back(i);
 				}
 			}
-			srand(time(0));
+			srand(seed + time(0));
 
 			//generate random index
 			int randNum = rand() % poss.size(); // range will be from 0 to the size of poss size
@@ -447,9 +449,9 @@ public:
 WallGridLayout wall_layout;
 PacmanMovement pacman(wall_layout.wall_grid);
 
-GhostMovement ghost1(0.f, 12.f, 0xffc0cb, wall_layout.wall_grid);
-GhostMovement ghost2(3.f, 12.f, 0x800080, wall_layout.wall_grid);
-GhostMovement ghost3(-3.f, 12.f, 0x1f51ff, wall_layout.wall_grid);
+GhostMovement ghost1(0.f, 12.f, 0xffc0cb, wall_layout.wall_grid, time(0));
+GhostMovement ghost2(3.f, 12.f, 0x800080, wall_layout.wall_grid, time(0) + 10);
+GhostMovement ghost3(-3.f, 12.f, 0x1f51ff, wall_layout.wall_grid, time(0) + 20);
 
 
 
